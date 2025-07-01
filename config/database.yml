@@ -35,6 +35,10 @@ production:
     url: <%= ENV['DATABASE_URL'] %>
     <<: *default
 
+  queue:
+    url: <%= ENV['DATABASE_URL'] %>
+    <<: *default
+
   solid_queue:
     url: <%= ENV['DATABASE_URL'] %>
     <<: *default
