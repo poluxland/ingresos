@@ -1,0 +1,57 @@
+<%= form_with(model: camion) do |form| %>
+  <% if camion.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(camion.errors.count, "error") %> prohibited this camion from being saved:</h2>
+
+      <ul>
+        <% camion.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :posicion, style: "display: block" %>
+    <%= form.text_field :posicion %>
+  </div>
+
+  <div>
+    <%= form.label :patente, style: "display: block" %>
+    <%= form.text_field :patente %>
+  </div>
+
+  <div>
+    <%= form.label :tipo, style: "display: block" %>
+    <%= form.text_field :tipo %>
+  </div>
+
+  <div>
+    <%= form.label :lista, style: "display: block" %>
+    <%= form.text_field :lista %>
+  </div>
+
+  <div>
+    <%= form.label :conductor, style: "display: block" %>
+    <%= form.text_field :conductor %>
+  </div>
+
+  <div>
+    <%= form.label :punto, style: "display: block" %>
+    <%= form.text_field :punto %>
+  </div>
+
+  <div>
+    <%= form.label :estado, style: "display: block" %>
+    <%= form.text_field :estado %>
+  </div>
+
+  <div>
+    <%= form.label :scraped_at, style: "display: block" %>
+    <%= form.datetime_field :scraped_at %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

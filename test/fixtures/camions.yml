@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  posicion: MyString
+  patente: MyString
+  tipo: MyString
+  lista: MyString
+  conductor: MyString
+  punto: MyString
+  estado: MyString
+  scraped_at: 2025-07-01 18:43:47
+
+two:
+  posicion: MyString
+  patente: MyString
+  tipo: MyString
+  lista: MyString
+  conductor: MyString
+  punto: MyString
+  estado: MyString
+  scraped_at: 2025-07-01 18:43:47

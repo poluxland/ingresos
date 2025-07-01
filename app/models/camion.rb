@@ -1,0 +1,2 @@
+class Camion < ApplicationRecord
+end

@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @camion %>
+
+<div>
+  <%= link_to "Edit this camion", edit_camion_path(@camion) %> |
+  <%= link_to "Back to camions", camions_path %>
+
+  <%= button_to "Destroy this camion", @camion, method: :delete %>
+</div>
