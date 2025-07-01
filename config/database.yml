@@ -2,19 +2,47 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
 
 development:
-  <<: *default
-  database: ingresos_development
+  primary:
+    database: ingresos_development
+    <<: *default
+
+  solid_queue:
+    database: ingresos_development
+    <<: *default
+
+  cable:
+    database: ingresos_development
+    <<: *default
 
 test:
-  <<: *default
-  database: ingresos_test
+  primary:
+    database: ingresos_test
+    <<: *default
+
+  solid_queue:
+    database: ingresos_test
+    <<: *default
+
+  cable:
+    database: ingresos_test
+    <<: *default
 
 production:
   primary:
-    <<: *default
     url: <%= ENV['DATABASE_URL'] %>
+    <<: *default
+
+  solid_queue:
+    url: <%= ENV['DATABASE_URL'] %>
+    <<: *default
+
   cable:
-    <<: *default
     url: <%= ENV['DATABASE_URL'] %>
+    <<: *default
+
+  cache:
+    url: <%= ENV['DATABASE_URL'] %>
+    <<: *default
