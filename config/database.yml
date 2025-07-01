@@ -79,14 +79,18 @@ test:
 #
 production:
   primary:
+    adapter: postgresql
     url: <%= ENV['DATABASE_URL'] %>
   # Si tienes otras bases y las URLs están en variables de entorno:
   cache:
+    adapter: postgresql
     url: <%= ENV['CACHE_DATABASE_URL'] %>
     migrations_paths: db/cache_migrate
   queue:
+    adapter: postgresql
     url: <%= ENV['QUEUE_DATABASE_URL'] %>
     migrations_paths: db/queue_migrate
   cable:
+    adapter: postgresql
     url: <%= ENV['CABLE_DATABASE_URL'] %>
     migrations_paths: db/cable_migrate
