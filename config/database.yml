@@ -19,7 +19,6 @@ default: &default
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
-
 development:
   <<: *default
   database: ingresos_development
@@ -79,20 +78,15 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  primary: &primary_production
-    <<: *default
-    database: ingresos_production
-    username: ingresos
-    password: <%= ENV["INGRESOS_DATABASE_PASSWORD"] %>
+  primary:
+    url: <%= ENV['DATABASE_URL'] %>
+  # Si tienes otras bases y las URLs están en variables de entorno:
   cache:
-    <<: *primary_production
-    database: ingresos_production_cache
+    url: <%= ENV['CACHE_DATABASE_URL'] %>
     migrations_paths: db/cache_migrate
   queue:
-    <<: *primary_production
-    database: ingresos_production_queue
+    url: <%= ENV['QUEUE_DATABASE_URL'] %>
     migrations_paths: db/queue_migrate
   cable:
-    <<: *primary_production
-    database: ingresos_production_cable
+    url: <%= ENV['CABLE_DATABASE_URL'] %>
     migrations_paths: db/cable_migrate
