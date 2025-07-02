@@ -4,31 +4,18 @@ require "nokogiri"
 
 class CamionScraper
   URL = "https://nexus.melon.cl:569/LlamadoCamiones/LlamadoLCA.aspx"
+  MAX_RETRIES = 3
 
   # Ejecuta el scraping y retorna el número de filas procesadas
   def self.ejecutar
-    # 1) Solicitud HTTP GET con timeouts configurados
-    response = HTTParty.get(
-      URL,
-      verify: false,
-      open_timeout: 10,   # máximo 10 segundos para abrir la conexión
-      read_timeout: 20    # máximo 20 segundos para recibir la respuesta
-    )
+    response = fetch_with_retries
+    return 0 unless response&.success?
 
-    unless response.success?
-      Rails.logger.error "[CamionScraper] HTTP request failed with code: #{response.code}"
-      return 0
-    end
-
-    # 2) Parsear el HTML de la respuesta
     doc = Nokogiri::HTML(response.body)
-
-    # 3) Seleccionar filas de datos descartando el header
     filas = doc.css("table#GridView1 tr").select { |tr| tr.at_css("td") }
 
-    # 4) Guardar o actualizar cada camión en la BD
     filas.each do |row|
-      cols = row.css("td").map { |td| td.text.strip }
+      cols = row.css("td").map(&:text).map(&:strip)
       next if cols.size < 7
 
       camion = Camion.find_or_initialize_by(patente: cols[1])
@@ -49,11 +36,28 @@ class CamionScraper
     end
 
     filas.size
-  rescue Net::OpenTimeout, Net::ReadTimeout => e
-    Rails.logger.error "[CamionScraper] Timeout error: #{e.class} - #{e.message}"
-    0
   rescue StandardError => e
-    Rails.logger.error "[CamionScraper] Error: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
+    Rails.logger.error "[CamionScraper] Unexpected error: #{e.class} - #{e.message}\n#{e.backtrace.first(5).join("\n")}"
     0
+  end
+
+  def self.fetch_with_retries
+    tries = 0
+    begin
+      Rails.logger.info "[CamionScraper] Fetch attempt \#{tries + 1} to \#{URL}"
+      HTTParty.get(
+        URL,
+        verify: false,
+        open_timeout: 30,
+        read_timeout: 60,
+        follow_redirects: true
+      )
+    rescue Net::OpenTimeout, Net::ReadTimeout => e
+      tries += 1
+      Rails.logger.warn "[CamionScraper] Timeout (#{e.class}): \#{e.message}. Retry \#{tries}/#{MAX_RETRIES}"
+      retry if tries < MAX_RETRIES
+      Rails.logger.error "[CamionScraper] All retries exhausted due to timeout."
+      nil
+    end
   end
 end
