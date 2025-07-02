@@ -2,6 +2,7 @@ source "https://rubygems.org"
 
 gem "httparty"
 gem "nokogiri"
+gem "mechanize"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.0.2"
