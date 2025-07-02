@@ -7,20 +7,26 @@ class CamionScraper
 
   # Ejecuta el scraping y retorna el número de filas procesadas
   def self.ejecutar
-    # 1) Solicitud HTTP GET
-    response = HTTParty.get(URL, verify: false)
+    # 1) Solicitud HTTP GET con timeouts configurados
+    response = HTTParty.get(
+      URL,
+      verify: false,
+      open_timeout: 10,   # máximo 10 segundos para abrir la conexión
+      read_timeout: 20    # máximo 20 segundos para recibir la respuesta
+    )
+
     unless response.success?
       Rails.logger.error "[CamionScraper] HTTP request failed with code: #{response.code}"
       return 0
     end
 
-    # 2) Parsear HTML
+    # 2) Parsear el HTML de la respuesta
     doc = Nokogiri::HTML(response.body)
 
-    # 3) Seleccionar filas de datos (descartar el header)
+    # 3) Seleccionar filas de datos descartando el header
     filas = doc.css("table#GridView1 tr").select { |tr| tr.at_css("td") }
 
-    # 4) Iterar y guardar cada registro
+    # 4) Guardar o actualizar cada camión en la BD
     filas.each do |row|
       cols = row.css("td").map { |td| td.text.strip }
       next if cols.size < 7
@@ -43,6 +49,9 @@ class CamionScraper
     end
 
     filas.size
+  rescue Net::OpenTimeout, Net::ReadTimeout => e
+    Rails.logger.error "[CamionScraper] Timeout error: #{e.class} - #{e.message}"
+    0
   rescue StandardError => e
     Rails.logger.error "[CamionScraper] Error: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
     0
