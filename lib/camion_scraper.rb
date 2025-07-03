@@ -3,11 +3,8 @@ require "httparty"
 require "nokogiri"
 
 class CamionScraper
-  URL       = "https://nexus.melon.cl:569/LlamadoCamiones/LlamadoLCA.aspx"
+  URL = "https://nexus.melon.cl:569/LlamadoCamiones/LlamadoLCA.aspx"
   MAX_RETRIES = 3
-
-  # Lee la URL de QuotaGuard Static (u otro add-on similar)
-  PROXY_URI = URI.parse(ENV.fetch("QUOTAGUARDSTATIC_URL"))
 
   # Ejecuta el scraping y retorna el número de filas procesadas
   def self.ejecutar
@@ -47,22 +44,17 @@ class CamionScraper
   def self.fetch_with_retries
     tries = 0
     begin
-      Rails.logger.info "[CamionScraper] Fetch attempt #{tries + 1} to #{URL}"
+      Rails.logger.info "[CamionScraper] Fetch attempt \#{tries + 1} to \#{URL}"
       HTTParty.get(
         URL,
         verify: false,
         open_timeout: 30,
         read_timeout: 60,
-        follow_redirects: true,
-        # Parámetros del proxy
-        http_proxyaddr:  PROXY_URI.host,
-        http_proxyport:  PROXY_URI.port,
-        http_proxyuser:  PROXY_URI.user,
-        http_proxypass:  PROXY_URI.password
+        follow_redirects: true
       )
     rescue Net::OpenTimeout, Net::ReadTimeout => e
       tries += 1
-      Rails.logger.warn "[CamionScraper] Timeout (#{e.class}): #{e.message}. Retry #{tries}/#{MAX_RETRIES}"
+      Rails.logger.warn "[CamionScraper] Timeout (#{e.class}): \#{e.message}. Retry \#{tries}/#{MAX_RETRIES}"
       retry if tries < MAX_RETRIES
       Rails.logger.error "[CamionScraper] All retries exhausted due to timeout."
       nil

@@ -6,6 +6,9 @@
 
 <div class="mb-3">
   <%= link_to "Ingreso manual", new_camion_path, class: "btn btn-primary" %>
+  <%= button_to "Scrapear ahora", scrape_camions_path,
+      method: :post,
+      class: "btn btn-secondary mb-3" %>
 </div>
 
 <table class="table table-striped table-hover">

@@ -6,6 +6,12 @@ class CamionsController < ApplicationController
     @camions = Camion.all
   end
 
+  # POST /camions/scrape
+  def scrape
+    count = CamionScraper.ejecutar
+    redirect_to camions_path, notice: "Scrape completado: #{count} filas procesadas."
+  end
+
   # GET /camions/1 or /camions/1.json
   def show
   end
