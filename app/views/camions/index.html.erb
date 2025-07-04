@@ -1,8 +1,21 @@
-<p style="color: green"><%= notice %></p>
+
 
 <% content_for :title, "Camions" %>
 
 <h1>Ingreso Camiones</h1>
+<% if notice %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <%= notice %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<% end %>
+
+<% if alert %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <%= alert %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<% end %>
 
 <div class="mb-3">
   <%= link_to "Ingreso manual", new_camion_path, class: "btn btn-primary mb-3" %>
