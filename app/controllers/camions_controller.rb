@@ -1,9 +1,31 @@
+require "net/http"
 class CamionsController < ApplicationController
   before_action :set_camion, only: %i[ show edit update destroy ]
 
   # GET /camions or /camions.json
   def index
     @camions = Camion.all
+  end
+
+  def check_port
+    url = URI.parse("https://nexus.melon.cl:569/LlamadoCamiones/LlamadoLCA.aspx")
+
+    begin
+      Net::HTTP.start(url.host, url.port, use_ssl: true, open_timeout: 5) do |http|
+        req = Net::HTTP::Get.new(url.request_uri)
+        res = http.request(req)
+
+        if res.code.to_i == 200
+          flash[:notice] = "✅ Acceso exitoso al puerto 569 de nexus.melon.cl"
+        else
+          flash[:alert] = "⚠️ Se conectó, pero el servidor respondió con código #{res.code}"
+        end
+      end
+    rescue => e
+      flash[:alert] = "❌ No se pudo conectar a nexus.melon.cl:569 (#{e.class}: #{e.message})"
+    end
+
+    redirect_to camions_path
   end
 
   # POST /camions/scrape
